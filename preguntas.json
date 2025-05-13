@@ -1,0 +1,42 @@
+[
+  {
+    "pregunta": "¿Cuál es la función principal de los glóbulos rojos?",
+    "respuesta": "Transportar oxígeno desde los pulmones hacia los tejidos",
+    "categoria": "Medicina"
+  },
+  {
+    "pregunta": "¿Cuál es el órgano responsable de filtrar la sangre y producir orina?",
+    "respuesta": "El riñón",
+    "categoria": "Anatomía"
+  },
+  {
+    "pregunta": "¿Qué es el ADN?",
+    "respuesta": "Ácido desoxirribonucleico, el material genético que contiene las instrucciones para el desarrollo y funcionamiento de los organismos",
+    "categoria": "Biología"
+  },
+  {
+    "pregunta": "¿Cuál es la fórmula química del dióxido de carbono?",
+    "respuesta": "CO2",
+    "categoria": "Química"
+  },
+  {
+    "pregunta": "¿Qué tipo de tejido conecta los músculos a los huesos?",
+    "respuesta": "Tendones",
+    "categoria": "Anatomía"
+  },
+  {
+    "pregunta": "¿Qué sistema del cuerpo humano se encarga de defendernos contra infecciones?",
+    "respuesta": "El sistema inmunológico",
+    "categoria": "Medicina"
+  },
+  {
+    "pregunta": "¿Qué elemento tiene el símbolo 'Na' en la tabla periódica?",
+    "respuesta": "Sodio",
+    "categoria": "Química"
+  },
+  {
+    "pregunta": "¿Cómo se llama el proceso mediante el cual las plantas convierten la luz solar en energía?",
+    "respuesta": "Fotosíntesis",
+    "categoria": "Biología"
+  }
+]
