@@ -1,0 +1,89 @@
+const questions = [
+  {
+    question: "¿Cuál es la capital de Francia?",
+    answers: [
+      { text: "Madrid", correct: false },
+      { text: "París", correct: true },
+      { text: "Roma", correct: false },
+      { text: "Berlín", correct: false },
+    ]
+  },
+  {
+    question: "¿Quién escribió 'Cien años de soledad'?",
+    answers: [
+      { text: "Mario Vargas Llosa", correct: false },
+      { text: "Gabriel García Márquez", correct: true },
+      { text: "Pablo Neruda", correct: false },
+      { text: "Jorge Luis Borges", correct: false },
+    ]
+  },
+  {
+    question: "¿Qué planeta es el más cercano al sol?",
+    answers: [
+      { text: "Marte", correct: false },
+      { text: "Venus", correct: false },
+      { text: "Mercurio", correct: true },
+      { text: "Tierra", correct: false },
+    ]
+  }
+];
+
+const questionElement = document.getElementById("question");
+const answersElement = document.getElementById("answers");
+const nextButton = document.getElementById("next-button");
+
+let currentQuestionIndex = 0;
+
+function showQuestion() {
+  resetState();
+  const currentQuestion = questions[currentQuestionIndex];
+  questionElement.textContent = currentQuestion.question;
+
+  currentQuestion.answers.forEach(answer => {
+    const button = document.createElement("button");
+    button.textContent = answer.text;
+    button.classList.add("answer");
+    if (answer.correct) {
+      button.dataset.correct = true;
+    }
+    button.addEventListener("click", selectAnswer);
+    answersElement.appendChild(button);
+  });
+}
+
+function resetState() {
+  nextButton.style.display = "none";
+  while (answersElement.firstChild) {
+    answersElement.removeChild(answersElement.firstChild);
+  }
+}
+
+function selectAnswer(e) {
+  const selectedButton = e.target;
+  const isCorrect = selectedButton.dataset.correct === "true";
+
+  Array.from(answersElement.children).forEach(button => {
+    button.disabled = true;
+    if (button.dataset.correct === "true") {
+      button.classList.add("correct");
+    } else {
+      button.classList.add("incorrect");
+    }
+  });
+
+  nextButton.style.display = "inline-block";
+}
+
+nextButton.addEventListener("click", () => {
+  currentQuestionIndex++;
+  if (currentQuestionIndex < questions.length) {
+    showQuestion();
+  } else {
+    questionElement.textContent = "¡Has terminado el cuestionario!";
+    answersElement.innerHTML = "";
+    nextButton.style.display = "none";
+  }
+});
+
+// Inicializa la primera pregunta
+showQuestion();
