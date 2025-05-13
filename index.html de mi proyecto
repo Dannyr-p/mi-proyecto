@@ -1,90 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banco de Preguntas ENARM</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f4f4f4;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .card {
-      background-color: white;
-      padding: 20px;
-      margin: 10px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 250px;
-      text-align: center;
-      transition: transform 0.3s;
-    }
-    .card:hover {
-      transform: scale(1.05);
-    }
-    .card h3 {
-      margin-bottom: 15px;
-      color: #4CAF50;
-    }
-    .card button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    .card button:hover {
-      background-color: #45a049;
-    }
-    footer {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 14px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Preguntas ENARM</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
+            margin: 0; /* Eliminar márgenes predeterminados del body */
+            background-color: #e9f5e9; /* Fondo verde claro similar a AMBOSS */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Asegurar que el footer esté siempre en la parte inferior */
+        }
+
+        /* Barra superior */
+        .top-bar {
+            background-color: #388e3c; /* Verde principal de AMBOSS (aproximado) */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .top-bar button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-bar button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2e7d32; /* Verde más oscuro para el título */
+            padding: 20px 0;
+            margin-bottom: 0; /* Reducir el margen inferior del título */
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            flex-grow: 1; /* Permitir que el contenedor crezca y empuje el footer hacia abajo */
+        }
+
+        .card {
+            background-color: white;
+            padding: 15px; /* Reducir un poco el padding */
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+            width: 280px; /* Aumentar un poco el ancho */
+            text-align: left; /* Alinear el texto a la izquierda para una lectura más fácil */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border: 1px solid #d4edda; /* Borde sutil */
+        }
+
+        .card:hover {
+            transform: translateY(-3px); /* Ligeramente elevado al pasar el mouse */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2e7d32; /* Verde oscuro para el título de la tarjeta */
+            font-size: 1.5em;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .card button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .card button:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            background-color: #f8f9fa; /* Fondo claro para el footer */
+            color: #6c757d;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.8em;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Banco de Preguntas ENARM</h1>
-  </header>
-
-  <div class="container">
-    <!-- Card de Cardiología -->
-    <div class="card">
-      <h3>Cardiología</h3>
-      <p>Resumen de los principales temas de Cardiología para tu preparación del ENARM.</p>
-      <button onclick="window.location.href='cardiologia.html'">Ver Resumen</button>
+    <div class="top-bar">
+        <button>Inicio</button>
+        <button>Loading</button>
     </div>
 
-    <!-- Card de Pediatría -->
-    <div class="card">
-      <h3>Pediatría</h3>
-      <p>Resumen de los principales temas de Pediatría para tu preparación del ENARM.</p>
-      <button onclick="window.location.href='pediatria.html'">Ver Resumen</button>
+    <header>
+        <h1>Banco de Preguntas ENARM</h1>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h3>Cardiología</h3>
+            <p>Resumen de los principales temas de Cardiología para tu preparación del ENARM.</p>
+            <button onclick="window.location.href='cardiologia.html'">Ver Resumen</button>
+        </div>
+
+        <div class="card">
+            <h3>Pediatría</h3>
+            <p>Resumen de los principales temas de Pediatría para tu preparación del ENARM.</p>
+            <button onclick="window.location.href='pediatria.html'">Ver Resumen</button>
+        </div>
+
+        <div class="card">
+            <h3>Medicina Interna</h3>
+            <p>Resumen de los principales temas de Medicina Interna para tu preparación del ENARM.</p>
+            <button onclick="window.location.href='medicina-interna.html'">Ver Resumen</button>
+        </div>
     </div>
 
-    <!-- Puedes seguir agregando más especialidades aquí -->
-    <!-- Ejemplo para otra especialidad -->
-    <div class="card">
-      <h3>Medicina Interna</h3>
-      <p>Resumen de los principales temas de Medicina Interna para tu preparación del ENARM.</p>
-      <button onclick="window.location.href='medicina-interna.html'">Ver Resumen</button>
-    </div>
-  </div>
-
-  <footer>
-    <p>&copy; 2025 Banco de Preguntas ENARM</p>
-  </footer>
+    <footer>
+        <p>&copy; 2025 Banco de Preguntas ENARM</p>
+    </footer>
 </body>
 </html>
