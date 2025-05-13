@@ -1,19 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banco de Preguntas</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Banco de Preguntas - Administrador</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    #login, #admin-panel {
+      margin-top: 20px;
+    }
+
+    #formulario-pregunta input, #formulario-pregunta select {
+      margin: 5px 0;
+      padding: 10px;
+      width: 300px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #mensaje-error {
+      color: red;
+      display: none;
+    }
+
+    #mensaje-exito {
+      color: green;
+      display: none;
+    }
+
+    .pregunta {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .opciones button {
+      margin: 5px;
+      padding: 5px 10px;
+    }
+
+    #contenedor-preguntas {
+      margin-top: 30px;
+    }
+
+    .admin-only {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Banco de Preguntas</h1>
-    <div id="pregunta"></div>
-    <ul id="opciones"></ul>
-    <div class="explicacion" id="explicacion"></div>
-    <button id="siguiente" style="display:none;">Siguiente</button>
+
+  <h1>Banco de Preguntas - Sistema de Examenes</h1>
+
+  <!-- Login de administrador -->
+  <div id="login">
+    <h2>Iniciar sesión como administrador</h2>
+    <input type="password" id="admin-password" placeholder="Contraseña" />
+    <button onclick="verificarLogin()">Entrar</button>
+    <p id="mensaje-error">Contraseña incorrecta. Intenta de nuevo.</p>
   </div>
-  <script src="script.js"></script>
+
+  <!-- Panel de administración -->
+  <div id="admin-panel" class="admin-only">
+    <h2>Agregar Nueva Pregunta</h2>
+    <form id="formulario-pregunta">
+      <input type="text" id="pregunta" placeholder="Pregunta" required />
+      <input type="text" id="opcion1" placeholder="Opción 1" required />
+      <input type="text" id="opcion2" placeholder="Opción 2" required />
+      <input type="text" id="opcion3" placeholder="Opción 3" required />
+      <input type="text" id="opcion4" placeholder="Opción 4" required />
+      <input type="text" id="respuestaCorrecta" placeholder="Respuesta Correcta" required />
+      <input type="text" id="explicacion" placeholder="Explicación" required />
+      <input type="text" id="categoria" placeholder="Categoría" required />
+      <button type="submit">Agregar Pregunta</button>
+    </form>
+    <p id="mensaje-exito">Pregunta agregada con éxito.</p>
+  </div>
+
+  <!-- Contenedor de preguntas -->
+  <div id="contenedor-preguntas"></div>
+
+  <script>
+    // Datos de ejemplo
+    const adminPassword = "admin123"; // Contraseña para el administrador
+    let preguntas = []; // Aquí se almacenarán las preguntas
+    let indiceActual = 0;
+    let puntaje = 0;
+
+    // Función para verificar si el admin está logueado
+    function verificarLogin() {
+      const password = document.getElementById('admin-password').value;
+      const mensajeError = document.getElementById('mensaje-error');
+      
+      if (password === adminPassword) {
+        // Muestra el panel de administración
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        // Muestra las preguntas
+        cargarPreguntas();
+      } else {
+        mensajeError.style.display = 'block';
+      }
+    }
+
+    // Agregar una nueva pregunta al banco de preguntas
+    function agregarPregunta(e) {
+      e.preventDefault();
+      
+      const nuevaPregunta = {
+        pregunta: document.getElementById('pregunta').value,
+        opciones: [
+          document.getElementById('opcion1').value,
+          document.getElementById('opcion2').value,
+          document.getElementById('opcion3').value,
+          document.getElementById('opcion4').value
+        ],
+        respuestaCorrecta: document.getElementById('respuestaCorrecta').value,
+        explicacion: document.getElementById('explicacion').value,
+        categoria: document.getElementById('categoria').value
+      };
+
+      preguntas.push(nuevaPregunta);
+      localStorage.setItem('preguntas', JSON.stringify(preguntas));
+
+      document.getElementById('mensaje-exito').style.display = 'block';
+      document.getElementById('formulario-pregunta').reset();
+    }
+
+    // Cargar preguntas desde el almacenamiento local
+    function cargarPreguntas() {
+      const storedQuestions = localStorage.getItem('preguntas');
+      if (storedQuestions) {
+        preguntas = JSON.parse(storedQuestions);
+      } else {
+        preguntas = [];
+      }
+      mostrarPreguntas();
+    }
+
+    // Mostrar las preguntas
+    function mostrarPreguntas() {
+      const contenedor = document.getElementById('contenedor-preguntas');
+      contenedor.innerHTML = ''; // Limpiar preguntas previas
+
+      preguntas.forEach((pregunta, index) => {
+        const div = document.createElement('div');
+        div.classList.add('pregunta');
+        div.innerHTML = `
+          <h3>${index + 1}. ${pregunta.pregunta}</h3>
+          <div class="opciones">
+            <button onclick="verificarRespuesta(${index}, '${pregunta.opciones[0]}')">${pregunta.opciones[0]}</button>
+            <button onclick="verificarRespuesta(${index}, '${pregunta.opciones[1]}')">${pregunta.opciones[1]}</button>
+            <button onclick="verificarRespuesta(${index}, '${pregunta.opciones[2]}')">${pregunta.opciones[2]}</button>
+            <button onclick="verificarRespuesta(${index}, '${pregunta.opciones[3]}')">${pregunta.opciones[3]}</button>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    // Verificar la respuesta seleccionada
+    function verificarRespuesta(index, respuestaSeleccionada) {
+      const pregunta = preguntas[index];
+      const esCorrecta = respuestaSeleccionada === pregunta.respuestaCorrecta;
+
+      if (esCorrecta) {
+        alert("✅ ¡Correcto!");
+        puntaje++;
+      } else {
+        alert(`❌ Incorrecto. Explicación: ${pregunta.explicacion}`);
+      }
+
+      indiceActual++;
+      if (indiceActual < preguntas.length) {
+        mostrarPreguntas();
+      } else {
+        mostrarResultadoFinal();
+      }
+    }
+
+    // Mostrar el resultado final
+    function mostrarResultadoFinal() {
+      const contenedor = document.getElementById('contenedor-preguntas');
+      contenedor.innerHTML = `
+        <h2>Resultado final</h2>
+        <p>Obtuviste ${puntaje} de ${preguntas.length} respuestas correctas.</p>
+      `;
+    }
+
+    // Cargar preguntas y agregar evento de formulario
+    window.onload = () => {
+      cargarPreguntas();
+      document.getElementById('formulario-pregunta').addEventListener('submit', agregarPregunta);
+    };
+  </script>
 </body>
 </html>
