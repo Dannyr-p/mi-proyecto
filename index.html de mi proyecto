@@ -6,17 +6,16 @@
     <title>Banco de Preguntas ENARM</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
-            margin: 0; /* Eliminar márgenes predeterminados del body */
-            background-color: #e9f5e9; /* Fondo verde claro similar a AMBOSS */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #e9f5e9;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Asegurar que el footer esté siempre en la parte inferior */
+            min-height: 100vh;
         }
 
-        /* Barra superior */
         .top-bar {
-            background-color: #388e3c; /* Verde principal de AMBOSS (aproximado) */
+            background-color: #388e3c;
             color: white;
             padding: 10px 20px;
             display: flex;
@@ -41,11 +40,23 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        h1 {
+        header {
             text-align: center;
-            color: #2e7d32; /* Verde más oscuro para el título */
-            padding: 20px 0;
-            margin-bottom: 0; /* Reducir el margen inferior del título */
+            padding: 30px 0;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        header p.slogan {
+            color: #555;
+            font-style: italic;
+            font-size: 1.1em;
+            margin-top: 0;
         }
 
         .container {
@@ -53,30 +64,32 @@
             flex-wrap: wrap;
             justify-content: center;
             padding: 20px;
-            flex-grow: 1; /* Permitir que el contenedor crezca y empuje el footer hacia abajo */
+            flex-grow: 1;
         }
 
         .card {
             background-color: white;
-            padding: 15px; /* Reducir un poco el padding */
+            padding: 15px;
             margin: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
-            width: 280px; /* Aumentar un poco el ancho */
-            text-align: left; /* Alinear el texto a la izquierda para una lectura más fácil */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            text-align: left;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            border: 1px solid #d4edda; /* Borde sutil */
+            border: 1px solid #d4edda;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
-            transform: translateY(-3px); /* Ligeramente elevado al pasar el mouse */
+            transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .card h3 {
             margin-top: 0;
-            margin-bottom: 10px;
-            color: #2e7d32; /* Verde oscuro para el título de la tarjeta */
+            margin-bottom: 5px;
+            color: #2e7d32;
             font-size: 1.5em;
         }
 
@@ -84,7 +97,8 @@
             color: #555;
             font-size: 0.9em;
             line-height: 1.5;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            flex-grow: 1; /* Para que el contenido empuje el botón hacia abajo */
         }
 
         .card button {
@@ -96,14 +110,22 @@
             border-radius: 4px;
             font-size: 1em;
             transition: background-color 0.3s ease;
+            align-self: flex-start; /* Alinear el botón al inicio (izquierda) */
         }
 
         .card button:hover {
             background-color: #45a049;
         }
 
+        .card .slogan-card {
+            color: #4CAF50;
+            font-style: italic;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+
         footer {
-            background-color: #f8f9fa; /* Fondo claro para el footer */
+            background-color: #f8f9fa;
             color: #6c757d;
             text-align: center;
             padding: 15px 0;
@@ -120,30 +142,35 @@
 
     <header>
         <h1>Banco de Preguntas ENARM</h1>
+        <p class="slogan">"Tu camino al ENARM, impulsado por el conocimiento."</p>
     </header>
 
     <div class="container">
         <div class="card">
             <h3>Cardiología</h3>
-            <p>Resumen de los principales temas de Cardiología para tu preparación del ENARM.</p>
+            <p>Domina el ritmo del corazón. ¡Prepárate con nuestros recursos especializados en Cardiología!</p>
+            <p class="slogan-card">"Cada latido de estudio te acerca a tu meta."</p>
             <button onclick="window.location.href='cardiologia.html'">Ver Resumen</button>
         </div>
 
         <div class="card">
             <h3>Pediatría</h3>
-            <p>Resumen de los principales temas de Pediatría para tu preparación del ENARM.</p>
+            <p>Cuida el futuro, prepárate con pasión. Explora nuestro banco de preguntas de Pediatría.</p>
+            <p class="slogan-card">"El conocimiento pediátrico, la clave para un futuro sano."</p>
             <button onclick="window.location.href='pediatria.html'">Ver Resumen</button>
         </div>
 
         <div class="card">
             <h3>Medicina Interna</h3>
-            <p>Resumen de los principales temas de Medicina Interna para tu preparación del ENARM.</p>
+            <p>La base de la medicina, a tu alcance. Sumérgete en los desafíos de la Medicina Interna.</p>
+            <p class="slogan-card">"Entiende la complejidad, conquista el ENARM."</p>
             <button onclick="window.location.href='medicina-interna.html'">Ver Resumen</button>
         </div>
-    </div>
+        </div>
 
     <footer>
         <p>&copy; 2025 Banco de Preguntas ENARM</p>
+        <p class="slogan">"¡El ENARM te espera, la preparación te impulsa!"</p>
     </footer>
 </body>
 </html>
