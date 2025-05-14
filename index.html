@@ -1,61 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi App de Preparación ENURM</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediFocus</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #ffffff;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .navbar .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+    .navbar .buttons a {
+      margin-left: 20px;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .navbar .buttons .login {
+      border: 1px solid #2e7d32;
+      color: #2e7d32;
+    }
+    .navbar .buttons .trial {
+      background-color: #2e7d32;
+      color: white;
+    }
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      color: #0d47a1;
+    }
+    .hero p {
+      font-size: 20px;
+      margin-top: 10px;
+      color: #444;
+    }
+    .hero .cta-buttons {
+      margin-top: 30px;
+    }
+    .hero .cta-buttons a {
+      margin: 0 10px;
+      padding: 15px 30px;
+      background-color: #2e7d32;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+    .features, .reasons {
+      padding: 60px 40px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      text-align: center;
+    }
+    .feature, .reason {
+      max-width: 300px;
+    }
+    .footer {
+      text-align: center;
+      padding: 30px;
+      background-color: #f5f5f5;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Barra Superior -->
-  <header class="barra-superior">
-    <div class="barra-left">
-      <button onclick="window.location.href='login.html'">Ingresar</button>
-      <button onclick="window.location.href='registro.html'">Registrarse</button>
+  <div class="navbar">
+    <div class="logo">📘 MediFocus</div>
+    <div class="buttons">
+      <a href="#" class="login">Ingresar</a>
+      <a href="#" class="trial">Prueba Gratis</a>
     </div>
-    <div class="barra-right">
-      <img src="logo.png" alt="Logo Examen" class="logo">
-    </div>
-  </header>
+  </div>
 
-  <!-- Título y Palabras -->
-  <section class="intro">
-    <h1>La forma más fácil de prepararte para el ENURM</h1>
-    <div class="keywords">
-      <p>tecnología</p>
-      <p>innovación</p>
-      <p>conocimiento</p>
+  <div class="hero">
+    <h1>Prepárate para el ENURM con confianza</h1>
+    <p>Banco de preguntas y explicaciones detalladas para estudiantes de medicina en República Dominicana</p>
+    <div class="cta-buttons">
+      <a href="#">Comenzar práctica</a>
+      <a href="#">Ver estadísticas</a>
     </div>
-  </section>
+  </div>
 
-  <!-- Recuadros Informativos -->
-  <section class="informacion">
-    <div class="recuadro">
-      <h2>Especificaciones de la plataforma</h2>
-      <ul>
-        <li>Preguntas con explicaciones de las respuestas correctas e incorrectas</li>
-        <li>Bibliografía oficial de los exámenes</li>
-        <li>Resúmenes con la información más útil y precisa</li>
-        <li>Actualizaciones frecuentes y contenido interactivo</li>
+  <div class="features">
+    <div class="feature">
+      <h3>📖 Banco de Preguntas Extenso</h3>
+      <p>Accede a cientos de preguntas tipo ENURM para practicar y mejorar tus conocimientos.</p>
+    </div>
+    <div class="feature">
+      <h3>🧠 Explicaciones Detalladas</h3>
+      <p>Comprende por qué una respuesta es correcta y por qué las demás son incorrectas.</p>
+    </div>
+    <div class="feature">
+      <h3>🏅 Seguimiento de Progreso</h3>
+      <p>Monitorea tu rendimiento y mejora en las áreas donde más lo necesitas.</p>
+    </div>
+  </div>
+
+  <div class="reasons">
+    <div class="reason">
+      <h2>¿Por qué usar MediFocus?</h2>
+      <ul style="text-align: left;">
+        <li>✅ Preguntas similares al examen real</li>
+        <li>✅ Explicaciones claras y con evidencia científica</li>
+        <li>✅ Interfaz intuitiva</li>
+        <li>✅ Accede desde cualquier dispositivo</li>
       </ul>
     </div>
-
-    <div class="recuadro">
-      <h2>Más beneficios para ti</h2>
-      <ul>
-        <li>Estadísticas personalizadas para tu progreso</li>
-        <li>Acceso desde cualquier dispositivo</li>
-        <li>Material optimizado para tu aprendizaje</li>
-      </ul>
+    <div class="reason" style="background: #e3f2fd; padding: 20px; border-radius: 8px;">
+      <h3>🕒 Optimiza tu tiempo de estudio</h3>
+      <ol style="text-align: left;">
+        <li>Identificar fortalezas y debilidades</li>
+        <li>Practicar con preguntas de calidad</li>
+        <li>Entender los conceptos detrás de cada respuesta</li>
+      </ol>
     </div>
-  </section>
+  </div>
 
-  <!-- Botón para Empezar -->
-  <section class="cta">
-    <button onclick="window.location.href='quiz.html'">Empieza ya</button>
-  </section>
+  <div class="footer">
+    ¿Listo para poner a prueba tus conocimientos? — <strong>Comienza ahora</strong>
+  </div>
 
-  <script src="app.js"></script>
 </body>
 </html>
