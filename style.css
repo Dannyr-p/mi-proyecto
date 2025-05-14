@@ -1,69 +1,124 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MediFocus</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fdfdfd;
+  color: #2c2c2c;
+  line-height: 1.6;
+}
 
-  <header class="navbar">
-    <div class="logo">📘 MediFocus</div>
-    <div class="buttons">
-      <a href="#" class="login">Ingresar</a>
-      <a href="#" class="trial">Prueba Gratis</a>
-    </div>
-  </header>
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-  <section class="hero">
-    <h1>Prepárate para el ENURM con confianza</h1>
-    <p>Banco de preguntas y explicaciones detalladas para estudiantes de medicina en República Dominicana</p>
-    <div class="cta-buttons">
-      <a href="#">Comenzar práctica</a>
-      <a href="#">Ver estadísticas</a>
-    </div>
-  </section>
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a237e;
+}
 
-  <section class="features">
-    <div class="feature">
-      <h3>📖 Banco de Preguntas Extenso</h3>
-      <p>Accede a cientos de preguntas tipo ENURM para practicar y mejorar tus conocimientos.</p>
-    </div>
-    <div class="feature">
-      <h3>🧠 Explicaciones Detalladas</h3>
-      <p>Comprende por qué una respuesta es correcta y por qué las demás son incorrectas.</p>
-    </div>
-    <div class="feature">
-      <h3>🏅 Seguimiento de Progreso</h3>
-      <p>Monitorea tu rendimiento y mejora en las áreas donde más lo necesitas.</p>
-    </div>
-  </section>
+.buttons a {
+  margin-left: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
 
-  <section class="reasons">
-    <div class="reason">
-      <h2>¿Por qué usar MediFocus?</h2>
-      <ul>
-        <li>✅ Preguntas similares al examen real</li>
-        <li>✅ Explicaciones claras y con evidencia científica</li>
-        <li>✅ Interfaz intuitiva</li>
-        <li>✅ Accede desde cualquier dispositivo</li>
-      </ul>
-    </div>
-    <div class="reason">
-      <h3>🕒 Optimiza tu tiempo de estudio</h3>
-      <ol>
-        <li>Identificar fortalezas y debilidades</li>
-        <li>Practicar con preguntas de calidad</li>
-        <li>Entender los conceptos detrás de cada respuesta</li>
-      </ol>
-    </div>
-  </section>
+.login {
+  border: 1px solid #1a237e;
+  color: #1a237e;
+  background-color: transparent;
+}
 
-  <footer class="footer">
-    ¿Listo para poner a prueba tus conocimientos? — <strong>Comienza ahora</strong>
-  </footer>
+.login:hover {
+  background-color: #1a237e;
+  color: white;
+}
 
-</body>
-</html>
+.trial {
+  background-color: #1a237e;
+  color: white;
+  border: none;
+}
+
+.trial:hover {
+  background-color: #0f1b5f;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 20px 60px;
+  background-color: #f3f6fb;
+}
+
+.hero h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #0d1b3f;
+}
+
+.hero p {
+  font-size: 18px;
+  max-width: 600px;
+  margin: auto;
+  margin-bottom: 30px;
+  color: #444;
+}
+
+.cta-buttons a {
+  display: inline-block;
+  margin: 10px;
+  padding: 12px 28px;
+  font-size: 16px;
+  border-radius: 6px;
+  background-color: #1a237e;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.cta-buttons a:hover {
+  background-color: #0f1b5f;
+}
+
+.features, .reasons {
+  padding: 60px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  background-color: #ffffff;
+}
+
+.feature, .reason {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: left;
+}
+
+.feature h3, .reason h3, .reason h2 {
+  color: #1a237e;
+}
+
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #e8eaf6;
+  font-size: 16px;
+  color: #333;
+}
