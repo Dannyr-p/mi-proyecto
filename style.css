@@ -1,62 +1,110 @@
+/* Estilos generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
-.container {
-  max-width: 700px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+/* Barra superior */
+.barra-superior {
+  display: flex;
+  justify-content: space-between;
+  background-color: green;
+  color: black;
+  padding: 10px 20px;
+  align-items: center;
 }
 
-h1 {
+.barra-left button {
+  background-color: transparent;
+  border: none;
+  color: black;
+  font-size: 16px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.barra-left button:hover {
+  color: white;
+}
+
+.barra-right .logo {
+  width: 40px;
+  height: 40px;
+}
+
+/* Sección de introducción */
+.intro {
   text-align: center;
+  margin-top: 30px;
+}
+
+.intro h1 {
+  font-size: 32px;
+  color: #2c3e50;
   margin-bottom: 20px;
 }
 
-#pregunta {
-  font-size: 1.2em;
-  margin-bottom: 15px;
+.keywords p {
+  display: inline-block;
+  margin: 0 15px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
-ul {
+/* Recuadros informativos */
+.informacion {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+
+.recuadro {
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 45%;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.recuadro h2 {
+  color: #16a085;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.recuadro ul {
   list-style-type: none;
-  padding: 0;
+  font-size: 16px;
+  color: #34495e;
 }
 
-li {
-  background: #eee;
+.recuadro ul li {
   margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
-li.correcto {
-  background-color: #c8e6c9;
+/* Botón CTA */
+.cta {
+  text-align: center;
+  margin-top: 50px;
 }
 
-li.incorrecto {
-  background-color: #ffcdd2;
-}
-
-button {
-  margin-top: 15px;
-  padding: 10px 15px;
-  border: none;
-  background-color: #007bff;
+.cta button {
+  background-color: #3498db;
   color: white;
+  padding: 15px 30px;
+  border: none;
+  font-size: 20px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.explicacion {
-  margin-top: 20px;
-  font-style: italic;
-  display: none;
+.cta button:hover {
+  background-color: #2980b9;
 }
