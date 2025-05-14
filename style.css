@@ -1,70 +1,91 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
+  background: #f9f9f9;
+  color: #333;
 }
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
-  background-color: #ffffff;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  padding: 20px 40px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.navbar .logo {
-  font-size: 22px;
-  font-weight: bold;
+.logo {
+  font-size: 24px;
+  font-weight: 700;
   color: #2e7d32;
 }
 
-.navbar .buttons a {
-  margin-left: 20px;
-  text-decoration: none;
+.buttons a {
+  margin-left: 15px;
   padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-.navbar .buttons .login {
-  border: 1px solid #2e7d32;
+.login {
+  border: 2px solid #2e7d32;
   color: #2e7d32;
 }
 
-.navbar .buttons .trial {
+.login:hover {
   background-color: #2e7d32;
-  color: white;
+  color: #fff;
+}
+
+.trial {
+  background-color: #2e7d32;
+  color: #fff;
+}
+
+.trial:hover {
+  background-color: #27692b;
 }
 
 .hero {
   text-align: center;
-  padding: 80px 20px;
+  padding: 100px 20px 60px;
+  background-color: #e8f5e9;
 }
 
 .hero h1 {
-  font-size: 48px;
+  font-size: 42px;
+  margin-bottom: 20px;
   color: #0d47a1;
 }
 
 .hero p {
-  font-size: 20px;
-  margin-top: 10px;
-  color: #444;
+  font-size: 18px;
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.hero .cta-buttons {
-  margin-top: 30px;
-}
-
-.hero .cta-buttons a {
-  margin: 0 10px;
-  padding: 15px 30px;
+.cta-buttons a {
+  display: inline-block;
+  margin: 10px;
+  padding: 12px 28px;
+  font-size: 16px;
+  border-radius: 8px;
   background-color: #2e7d32;
   color: white;
   text-decoration: none;
-  border-radius: 8px;
-  font-size: 18px;
+  transition: background 0.3s ease;
+}
+
+.cta-buttons a:hover {
+  background-color: #27692b;
 }
 
 .features, .reasons {
@@ -73,16 +94,20 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   gap: 40px;
-  text-align: center;
+  background-color: #fff;
 }
 
 .feature, .reason {
-  max-width: 300px;
+  background: #f1f8e9;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 320px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .footer {
   text-align: center;
-  padding: 30px;
-  background-color: #f5f5f5;
-  color: #666;
+  padding: 40px 20px;
+  background-color: #c8e6c9;
+  font-size: 16px;
 }
