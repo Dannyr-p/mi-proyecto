@@ -6,7 +6,7 @@ body {
   padding: 20px;
 }
 .container {
-  max-width: 700px;
+  max-width: 800px;
   margin: auto;
   background: white;
   padding: 30px;
@@ -16,7 +16,7 @@ body {
 h1, h2 {
   color: #0f172a;
 }
-form input, select {
+form input, form textarea, select {
   display: block;
   width: 100%;
   margin-bottom: 12px;
@@ -24,6 +24,10 @@ form input, select {
   font-size: 16px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
+}
+textarea {
+  height: 80px;
+  resize: vertical;
 }
 button {
   background-color: #10b981;

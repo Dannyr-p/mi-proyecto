@@ -28,29 +28,34 @@ window.validarClave = () => {
   }
 };
 
-document.getElementById("formPregunta").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const pregunta = document.getElementById("pregunta").value;
-  const correcta = document.getElementById("correcta").value;
-  const opciones = {
-    A: document.getElementById("opcionA").value,
-    B: document.getElementById("opcionB").value,
-    C: document.getElementById("opcionC").value,
-    D: document.getElementById("opcionD").value
-  };
-  const explicacion = {
-    A: document.getElementById("expA").value,
-    B: document.getElementById("expB").value,
-    C: document.getElementById("expC").value,
-    D: document.getElementById("expD").value
-  };
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formPregunta");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const pregunta = document.getElementById("pregunta").value;
+      const correcta = document.getElementById("correcta").value;
+      const opciones = {
+        A: document.getElementById("opcionA").value,
+        B: document.getElementById("opcionB").value,
+        C: document.getElementById("opcionC").value,
+        D: document.getElementById("opcionD").value
+      };
+      const explicacion = {
+        A: document.getElementById("expA").value,
+        B: document.getElementById("expB").value,
+        C: document.getElementById("expC").value,
+        D: document.getElementById("expD").value
+      };
 
-  await addDoc(collection(db, "preguntas"), {
-    pregunta, opciones, explicacion, correcta
-  });
+      await addDoc(collection(db, "preguntas"), {
+        pregunta, opciones, explicacion, correcta
+      });
 
-  e.target.reset();
-  cargarPreguntas();
+      form.reset();
+      cargarPreguntas();
+    });
+  }
 });
 
 async function cargarPreguntas() {
@@ -69,3 +74,12 @@ window.eliminarPregunta = async (id) => {
   await deleteDoc(doc(db, "preguntas", id));
   cargarPreguntas();
 };
+
+
+// Autoajuste dinámico de textareas
+document.addEventListener("input", (e) => {
+  if (e.target.tagName.toLowerCase() === "textarea") {
+    e.target.style.height = "auto";
+    e.target.style.height = (e.target.scrollHeight + 4) + "px";
+  }
+});
