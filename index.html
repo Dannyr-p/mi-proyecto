@@ -3,64 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MediFocus</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>MediFocus | Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo">📘 MediFocus</div>
-    <div class="buttons">
-      <a href="#" class="login">Ingresar</a>
-      <a href="#" class="trial">Prueba Gratis</a>
+  <main class="container">
+    <h1>Administrador MediFocus</h1>
+    <div id="auth">
+      <input type="password" id="clave" placeholder="Clave de administrador" />
+      <button onclick="validarClave()">Entrar</button>
     </div>
-  </header>
 
-  <section class="hero">
-    <h1>Prepárate para el ENURM con confianza</h1>
-    <p>Banco de preguntas y explicaciones detalladas para estudiantes de medicina en República Dominicana</p>
-    <div class="cta-buttons">
-      <a href="#">Comenzar práctica</a>
-    </div>
-  </section>
+    <section id="adminPanel" style="display:none;">
+      <h2>Agregar pregunta</h2>
+      <form id="formPregunta">
+        <input type="text" id="pregunta" placeholder="Pregunta" required />
+        <input type="text" id="opcionA" placeholder="Opción A" required />
+        <input type="text" id="expA" placeholder="Explicación A" required />
+        <input type="text" id="opcionB" placeholder="Opción B" required />
+        <input type="text" id="expB" placeholder="Explicación B" required />
+        <input type="text" id="opcionC" placeholder="Opción C" required />
+        <input type="text" id="expC" placeholder="Explicación C" required />
+        <input type="text" id="opcionD" placeholder="Opción D" required />
+        <input type="text" id="expD" placeholder="Explicación D" required />
+        <select id="correcta" required>
+          <option value="">Respuesta correcta</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+        <button type="submit">Guardar pregunta</button>
+      </form>
 
-  <section class="features">
-    <div class="feature">
-      <h3>📖 Banco de Preguntas</h3>
-      <p>Simula el ENURM con preguntas reales y actuales.</p>
-    </div>
-    <div class="feature">
-      <h3>🧠 Explicaciones Claras</h3>
-      <p>Entiende cada respuesta con fundamentos clínicos y guías.</p>
-    </div>
-    <div class="feature">
-      <h3>🏅 Seguimiento</h3>
-      <p>Mide tu progreso y mejora en las áreas clave.</p>
-    </div>
-  </section>
+      <h2>Preguntas guardadas</h2>
+      <ul id="listaPreguntas"></ul>
+    </section>
 
-  <section class="reasons">
-    <div class="reason">
-      <h2>¿Por qué usar MediFocus?</h2>
-      <ul>
-        <li>✅ Preguntas similares al examen real</li>
-        <li>✅ Explicaciones claras con evidencia científica</li>
-        <li>✅ Interfaz intuitiva y adaptable</li>
-        <li>✅ Accede desde cualquier dispositivo</li>
-      </ul>
-    </div>
-    <div class="reason">
-      <h2>Optimiza tu estudio</h2>
-      <ol>
-        <li>Identifica tus fortalezas y debilidades</li>
-        <li>Practica con preguntas clínicas razonadas</li>
-        <li>Domina los temas más evaluados en el ENURM</li>
-      </ol>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <a href="#" class="login">Ingresar</a>
-  </footer>
+    <script type="module" src="script.js"></script>
+  </main>
 </body>
 </html>
