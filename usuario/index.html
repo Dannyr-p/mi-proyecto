@@ -1,27 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Banco de Preguntas | MediFocus</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8">
+  <title>Quiz Médico</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; margin:0; padding:0; }
+    .container { max-width: 600px; margin: 30px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 24px; }
+    h1 { text-align: center; color: #1976d2; }
+    label { display: block; margin: 10px 0 5px; }
+    select, input[type="number"] { width: 100%; padding: 6px; margin-bottom: 10px; }
+    .boton { background: #1976d2; color: #fff; border: none; padding: 10px 20px; margin: 6px 2px; border-radius: 4px; cursor: pointer; }
+    .boton.secundario { background: #aaa; }
+    .boton:disabled { background: #ccc; }
+    .barra-progreso { background: #e0e0e0; border-radius: 4px; margin: 10px 0; height: 12px; }
+    .progreso-fill { background: #1976d2; height: 100%; border-radius: 4px; width: 0%; transition: width .3s; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; margin-bottom: 10px; }
+    #pregunta { margin: 20px 0 10px 0; }
+    .opciones label { background: #f1f1f1; border-radius: 4px; display: block; margin: 6px 0; padding: 8px; cursor: pointer; }
+    .opciones label.correcta { background: #d0ffd0; }
+    .opciones label.incorrecta { background: #ffd0d0; }
+    .letra { font-weight: bold; margin-right: 6px; }
+    .feedback-opcion { margin: 3px 0 4px 20px; }
+    .resultado-final { text-align: center; }
+    #temporizador { font-size: 1.2em; color: #d32f2f; margin-bottom: 10px; text-align: center; }
+    @media (max-width: 600px) {
+      .container { padding: 8px; }
+    }
+  </style>
 </head>
 <body>
-  <main class="card">
+  <div class="container">
+    <h1>Quiz Médico</h1>
+    <!-- Filtros -->
     <div id="filtro">
-      <h2>Banco de preguntas</h2>
-      <label for="especialidad">Especialidad:</label>
-      <select id="especialidad"></select>
-      <label for="subespecialidad">Subespecialidad:</label>
-      <select id="subespecialidad"></select>
-      <label for="tema">Tema:</label>
-      <select id="tema"></select>
-      <label for="cantidad">Cantidad de preguntas:</label>
-      <input type="number" id="cantidad" min="1" placeholder="Ej. 10">
+      <label>Especialidad:
+        <select id="especialidad"></select>
+      </label>
+      <label>Subespecialidad:
+        <select id="subespecialidad"></select>
+      </label>
+      <label>Tema:
+        <select id="tema"></select>
+      </label>
+      <label>Cantidad de preguntas:
+        <input type="number" id="cantidad" min="1" max="100" value="10">
+      </label>
+      <label>
+        <input type="checkbox" id="activarTemporizador" checked>
+        Activar temporizador (5 minutos)
+      </label>
       <button onclick="cargarPreguntas()" class="boton">Comenzar</button>
     </div>
+
+    <!-- Quiz -->
     <div id="quiz" style="display:none;">
       <div class="barra-progreso">
         <div id="progreso" class="progreso-fill"></div>
@@ -31,12 +62,15 @@
         <span id="aciertos">✔️ 0 aciertos</span>
       </div>
       <h2 id="pregunta"></h2>
+      <div id="temporizador"></div>
       <form id="opciones" class="opciones"></form>
       <div id="feedback" class="feedback" style="display:none;"></div>
       <button id="btnVerificar" onclick="verificar();return false;" class="boton">Verificar</button>
       <button id="btnSiguiente" onclick="siguiente();return false;" class="boton secundario" style="display:none;">Siguiente pregunta</button>
     </div>
-  </main>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
