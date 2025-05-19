@@ -33,10 +33,15 @@ async function cargarCategorias() {
   temaSubespSel.innerHTML = "<option value=''>Selecciona una subespecialidad (opcional)</option>";
   temaSubespSel.disabled = true;
 
-  // Cargar especialidades
+  // Cargar especialidades sin duplicados
   const espSnap = await db.collection("especialidades").get();
+  const espSet = new Set();
   espSnap.forEach(doc => {
     const nombre = doc.data().nombre;
+    if (!nombre) return;
+    const key = nombre.trim().toLowerCase();
+    if (espSet.has(key)) return;
+    espSet.add(key);
     espSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
     document.getElementById("relacionEspecialidad").innerHTML += `<option value="${nombre}">${nombre}</option>`;
     temaEspSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
@@ -49,11 +54,16 @@ async function cargarCategorias() {
       </div>`;
   });
 
-  // Cargar subespecialidades
+  // Cargar subespecialidades sin duplicados
   const subSnap = await db.collection("subespecialidades").get();
+  const subSet = new Set();
   subSnap.forEach(doc => {
     const nombre = doc.data().nombre;
     const especialidad = doc.data().especialidad || "❌ Sin especialidad";
+    if (!nombre) return;
+    const key = nombre.trim().toLowerCase() + "|" + especialidad.trim().toLowerCase();
+    if (subSet.has(key)) return;
+    subSet.add(key);
     listaSub.innerHTML += `
       <div class="categoria-item">${nombre} (${especialidad})
         <span class="acciones">
@@ -63,11 +73,16 @@ async function cargarCategorias() {
       </div>`;
   });
 
-  // Cargar temas
+  // Cargar temas sin duplicados
   const temasSnap = await db.collection("temas").get();
+  const temaSet = new Set();
   temasSnap.forEach(doc => {
     const nombre = doc.data().nombre;
     const subespecialidad = doc.data().subespecialidad || "";
+    if (!nombre) return;
+    const key = nombre.trim().toLowerCase() + "|" + subespecialidad.trim().toLowerCase();
+    if (temaSet.has(key)) return;
+    temaSet.add(key);
     listaTemas.innerHTML += `
       <div class="categoria-item">${nombre}${subespecialidad ? " (" + subespecialidad + ")" : ""}
         <span class="acciones">
@@ -93,7 +108,7 @@ async function agregarSubespecialidad() {
   }
 }
 
-// Al cambiar especialidad en formulario de pregunta, cargar subespecialidades relacionadas
+// Al cambiar especialidad en formulario de pregunta, cargar subespecialidades relacionadas sin duplicados
 document.getElementById("especialidad").addEventListener("change", async function () {
   const especialidadSeleccionada = this.value;
   const subSel = document.getElementById("subespecialidad");
@@ -103,13 +118,19 @@ document.getElementById("especialidad").addEventListener("change", async functio
     .where("especialidad", "==", especialidadSeleccionada)
     .get();
 
+  // Normalización para evitar duplicados
+  const nombresAgregados = new Set();
   snap.forEach(doc => {
     const nombre = doc.data().nombre;
+    if (!nombre) return;
+    const key = nombre.trim().toLowerCase();
+    if (nombresAgregados.has(key)) return;
+    nombresAgregados.add(key);
     subSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
   });
 });
 
-// Al cambiar especialidad en formulario de temas, cargar subespecialidades relacionadas
+// Al cambiar especialidad en formulario de temas, cargar subespecialidades relacionadas sin duplicados
 document.getElementById("temaEspecialidad").addEventListener("change", async function () {
   const especialidadSeleccionada = this.value;
   const subSel = document.getElementById("temaSubespecialidad");
@@ -125,8 +146,13 @@ document.getElementById("temaEspecialidad").addEventListener("change", async fun
     .get();
 
   let tieneSubesp = false;
+  const nombresAgregados = new Set();
   subSnap.forEach(doc => {
     const nombre = doc.data().nombre;
+    if (!nombre) return;
+    const key = nombre.trim().toLowerCase();
+    if (nombresAgregados.has(key)) return;
+    nombresAgregados.add(key);
     subSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
     tieneSubesp = true;
   });
@@ -276,9 +302,6 @@ async function editarPregunta(id) {
   document.getElementById("correcta").value = d.correcta;
 }
 
-// Cargar también preguntas al iniciar
-// (ya se hace en window.onload)
-
 // Eliminar especialidad
 async function eliminarEspecialidad(nombre) {
   if (confirm("¿Eliminar esta especialidad?")) {
@@ -326,6 +349,7 @@ document.getElementById("especialidad").addEventListener("change", async functio
   subSel.innerHTML = "<option value=''>—</option>";
   temaSel.innerHTML = "<option value=''>Selecciona un tema</option>";
 
+  // Subespecialidades sin duplicados
   const subSnap = await db.collection("subespecialidades")
     .where("especialidad", "==", especialidadSeleccionada)
     .get();
@@ -333,12 +357,14 @@ document.getElementById("especialidad").addEventListener("change", async functio
   const nombresAgregados = new Set();
   subSnap.forEach(doc => {
     const nombre = doc.data().nombre;
-    if (!nombresAgregados.has(nombre)) {
-      nombresAgregados.add(nombre);
-      subSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
-    }
+    if (!nombre) return;
+    const key = nombre.trim().toLowerCase();
+    if (nombresAgregados.has(key)) return;
+    nombresAgregados.add(key);
+    subSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
   });
 
+  // Temas
   const temaSnap = await db.collection("temas")
     .where("especialidad", "==", especialidadSeleccionada)
     .get();
