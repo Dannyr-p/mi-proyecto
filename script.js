@@ -1,4 +1,3 @@
-
 console.log("✅ script.js del panel de administrador cargado correctamente");
 
 const firebaseConfig = {
