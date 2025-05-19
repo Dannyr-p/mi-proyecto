@@ -66,14 +66,14 @@
         <div>
           <h3>Especialidades</h3>
           <input type="text" id="nuevaEspecialidad" placeholder="Nueva especialidad" />
-          <button onclick="agregarEspecialidad()">Agregar</button>
+          <button id="btnEspecialidad" onclick="agregarEspecialidad()">Agregar</button>
           <div id="listaEspecialidades"></div>
         </div>
         <div>
           <h3>Subespecialidades</h3>
           <input type="text" id="nuevaSubespecialidad" placeholder="Nueva subespecialidad" />
           <select id="relacionEspecialidad"></select>
-          <button onclick="agregarSubespecialidad()">Agregar</button>
+          <button id="btnSubespecialidad" onclick="agregarSubespecialidad()">Agregar</button>
           <div id="listaSubespecialidades"></div>
         </div>
         <div>
@@ -81,7 +81,7 @@
           <input type="text" id="nuevoTema" placeholder="Nuevo tema" />
           <select id="temaEspecialidad"></select>
           <select id="temaSubespecialidad"><option value="">(Ninguna)</option></select>
-          <button onclick="agregarTema()">Agregar</button>
+          <button id="btnTema" onclick="agregarTema()">Agregar</button>
           <div id="listaTemas"></div>
         </div>
       </div>
