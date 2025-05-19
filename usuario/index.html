@@ -22,7 +22,6 @@
     .letra { font-weight: bold; margin-right: 6px; }
     .feedback-opcion { margin: 3px 0 4px 20px; }
     .resultado-final { text-align: center; }
-    #temporizador { font-size: 1.2em; color: #d32f2f; margin-bottom: 10px; text-align: center; }
     @media (max-width: 600px) {
       .container { padding: 8px; }
     }
@@ -45,10 +44,6 @@
       <label>Cantidad de preguntas:
         <input type="number" id="cantidad" min="1" max="100" value="10">
       </label>
-      <label>
-        <input type="checkbox" id="activarTemporizador" checked>
-        Activar temporizador (5 minutos)
-      </label>
       <button onclick="cargarPreguntas()" class="boton">Comenzar</button>
     </div>
 
@@ -62,7 +57,6 @@
         <span id="aciertos">✔️ 0 aciertos</span>
       </div>
       <h2 id="pregunta"></h2>
-      <div id="temporizador"></div>
       <form id="opciones" class="opciones"></form>
       <div id="feedback" class="feedback" style="display:none;"></div>
       <button id="btnVerificar" onclick="verificar();return false;" class="boton">Verificar</button>
