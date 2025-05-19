@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -22,8 +21,8 @@
       <label>Especialidad</label>
       <select id="especialidad"></select>
 
-      <label>Subespecialidad</label>
-      <select id="subespecialidad"><option value="">(opcional)</option></select>
+      <label>Subespecialidad (opcional)</label>
+      <select id="subespecialidad"><option value="">(Ninguna)</option></select>
 
       <label>Tema</label>
       <select id="tema"><option value="">(opcional)</option></select>
@@ -79,6 +78,9 @@
           <h3>Temas</h3>
           <input type="text" id="nuevoTema" placeholder="Nuevo tema" />
           <select id="temaEspecialidad"></select>
+          <select id="temaSubespecialidad">
+            <option value="">(Ninguna)</option>
+          </select>
           <button onclick="agregarTema()">Agregar</button>
           <div id="listaTemas"></div>
         </div>
