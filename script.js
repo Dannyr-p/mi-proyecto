@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyCKI_M2XezuI45BsBh1UwRhaor5YbZvypQ",
   authDomain: "medifocus-edc4b.firebaseapp.com",
@@ -14,6 +13,40 @@ const db = firebase.firestore();
 let preguntas = [];
 let index = 0;
 let aciertos = 0;
+
+// Cargar especialidades únicas al cargar la página
+async function cargarEspecialidades() {
+  const snapshot = await db.collection("preguntas").get();
+  const especialidades = new Set();
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.especialidad) {
+      especialidades.add(data.especialidad);
+    }
+  });
+  const select = document.getElementById("especialidad");
+  select.innerHTML = `<option value="TODAS">🌀 Preguntas aleatorias (todas)</option>`;
+  especialidades.forEach(esp => {
+    select.innerHTML += `<option value="${esp}">${esp}</option>`;
+  });
+}
+
+// Si quieres también subespecialidad y tema, descomenta y adapta:
+/*
+async function cargarSubespecialidades(especialidad) {
+  const snapshot = await db.collection("preguntas").where("especialidad", "==", especialidad).get();
+  const subespecialidades = new Set();
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.subespecialidad) subespecialidades.add(data.subespecialidad);
+  });
+  // Rellena el select de subespecialidad con estas opciones...
+}
+
+async function cargarTemas(especialidad, subespecialidad) {
+  // Similar, usando where para especialidad y subespecialidad
+}
+*/
 
 async function cargarPreguntas() {
   const select = document.getElementById("especialidad");
@@ -83,7 +116,7 @@ function verificar() {
   let html = "";
   for (let letra in q.opciones) {
     const label = letra === correcta ? "✅" : (letra === user ? "❌" : "•");
-    html += `<p><strong>${label} ${letra}:</strong> ${q.explicacion[letra]}</p>`;
+    html += `<p><strong>${label} ${letra}:</strong> ${q.explicacion && q.explicacion[letra] ? q.explicacion[letra] : ''}</p>`;
   }
 
   document.getElementById("feedback").innerHTML = html;
@@ -133,3 +166,6 @@ function mostrarResultados() {
     </div>
   `;
 }
+
+// ¡MUY IMPORTANTE! Ejecuta esto al cargar la página:
+window.onload = cargarEspecialidades;
