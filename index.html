@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banco de Preguntas | MediFocus</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <main class="card">
+    <div id="filtro">
+      <h2>Banco de preguntas</h2>
+      <label for="especialidad">Selecciona especialidades:</label>
+      <select id="especialidad" multiple size="6">
+        <option value="TODAS">🌀 Preguntas aleatorias (todas)</option>
+        <option value="Cardiología">Cardiología</option>
+        <option value="Pediatría">Pediatría</option>
+        <option value="Medicina Interna">Medicina Interna</option>
+        <option value="Ginecología">Ginecología</option>
+        <option value="Cirugía">Cirugía</option>
+        <option value="Dermatología">Dermatología</option>
+        <option value="Infectología">Infectología</option>
+      </select>
+      <label for="cantidad">Cantidad de preguntas:</label>
+      <input type="number" id="cantidad" min="1" placeholder="Ej. 10">
+      <button onclick="cargarPreguntas()" class="boton">Comenzar</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+      <div class="barra-progreso">
+        <div id="progreso" class="progreso-fill"></div>
+      </div>
+      <div class="topbar">
+        <span id="contador">Pregunta 1</span>
+        <span id="aciertos">✔️ 0 aciertos</span>
+      </div>
+      <h2 id="pregunta"></h2>
+      <form id="opciones" class="opciones"></form>
+      <div id="feedback" class="feedback" style="display:none;"></div>
+      <button id="btnVerificar" onclick="verificar()" class="boton">Verificar</button>
+      <button id="btnSiguiente" onclick="siguiente()" class="boton secundario" style="display:none;">Siguiente pregunta</button>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
