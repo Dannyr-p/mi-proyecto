@@ -1,255 +1,135 @@
-// --- CONFIGURACIÓN DE FIREBASE ---
-// Reemplaza estos valores con los tuyos de Firebase
+
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyCKI_M2XezuI45BsBh1UwRhaor5YbZvypQ",
+  authDomain: "medifocus-edc4b.firebaseapp.com",
+  projectId: "medifocus-edc4b",
+  storageBucket: "medifocus-edc4b.appspot.com",
+  messagingSenderId: "13156485482",
+  appId: "1:13156485482:web:e368315f65ab4237f07d13"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// --- CARGA DE ESPECIALIDADES EN VARIOS SELECTS ---
-function cargarEspecialidades() {
-  const especialidadSelects = [
-    document.getElementById("especialidad"),
-    document.getElementById("relacionEspecialidad"),
-    document.getElementById("temaEspecialidad")
-  ];
-  db.collection("especialidades").onSnapshot((snapshot) => {
-    especialidadSelects.forEach(select => select.innerHTML = "");
-    snapshot.forEach((doc) => {
-      especialidadSelects.forEach(select => {
-        const option = document.createElement("option");
-        option.value = doc.id;
-        option.text = doc.data().nombre;
-        select.appendChild(option.cloneNode(true));
-      });
-    });
-    cargarSubespecialidades();
-    cargarSubespecialidadesParaTemas();
-    cargarTemas();
-    listarEspecialidades();
-  });
-}
+let preguntas = [];
+let index = 0;
+let aciertos = 0;
 
-// --- CARGA DE SUBESPECIALIDADES ---
-function cargarSubespecialidades() {
-  const especialidadId = document.getElementById("especialidad").value;
-  const subespecialidadSelect = document.getElementById("subespecialidad");
-  subespecialidadSelect.innerHTML = "<option value=''>Ninguna</option>";
-  if (!especialidadId) return;
-  db.collection("subespecialidades").where("especialidadId", "==", especialidadId).onSnapshot((snapshot) => {
-    snapshot.forEach((doc) => {
-      const option = document.createElement("option");
-      option.value = doc.id;
-      option.text = doc.data().nombre;
-      subespecialidadSelect.appendChild(option);
-    });
-    cargarTemas();
-    listarSubespecialidades();
-  });
-}
+async function cargarPreguntas() {
+  const select = document.getElementById("especialidad");
+  const seleccionadas = Array.from(select.selectedOptions).map(o => o.value);
+  let cantidad = parseInt(document.getElementById("cantidad").value);
+  if (isNaN(cantidad) || cantidad <= 0) cantidad = 100;
 
-// --- CARGA DE SUBESPECIALIDADES PARA TEMAS ---
-function cargarSubespecialidadesParaTemas() {
-  const especialidadId = document.getElementById("temaEspecialidad").value;
-  const temaSubespecialidad = document.getElementById("temaSubespecialidad");
-  temaSubespecialidad.innerHTML = "<option value=''>Ninguna</option>";
-  if (!especialidadId) return;
-  db.collection("subespecialidades").where("especialidadId", "==", especialidadId).onSnapshot((snapshot) => {
-    snapshot.forEach((doc) => {
-      const option = document.createElement("option");
-      option.value = doc.id;
-      option.text = doc.data().nombre;
-      temaSubespecialidad.appendChild(option);
-    });
-  });
-}
+  preguntas = [];
 
-// --- CARGA DE TEMAS SEGÚN ESPECIALIDAD y SUBESPECIALIDAD ---
-function cargarTemas() {
-  const especialidadId = document.getElementById("especialidad").value;
-  const subespecialidadId = document.getElementById("subespecialidad").value;
-  const temaSelect = document.getElementById("tema");
-  temaSelect.innerHTML = "<option value=''>Seleccione tema</option>";
-  if (!especialidadId) return;
-  db.collection("temas").where("especialidadId", "==", especialidadId).onSnapshot((snapshot) => {
-    temaSelect.innerHTML = "<option value=''>Seleccione tema</option>";
-    snapshot.forEach((doc) => {
-      const tema = doc.data();
-      // Mostrar si es tema general o pertenece a la subespecialidad seleccionada
-      if (!subespecialidadId || !tema.subespecialidadId || tema.subespecialidadId === subespecialidadId) {
-        const option = document.createElement("option");
-        option.value = doc.id;
-        option.text = tema.nombre;
-        temaSelect.appendChild(option);
-      }
-    });
-    listarTemas();
-  });
-}
-
-// --- AGREGAR ESPECIALIDAD ---
-function agregarEspecialidad() {
-  const nombre = document.getElementById("nuevaEspecialidad").value.trim();
-  if (!nombre) return alert("Ingrese el nombre de la especialidad");
-  db.collection("especialidades").add({ nombre }).then(() => {
-    document.getElementById("nuevaEspecialidad").value = "";
-  });
-}
-
-// --- AGREGAR SUBESPECIALIDAD ---
-function agregarSubespecialidad() {
-  const nombre = document.getElementById("nuevaSubespecialidad").value.trim();
-  const especialidadId = document.getElementById("relacionEspecialidad").value;
-  if (!nombre || !especialidadId) return alert("Completa ambos campos");
-  db.collection("subespecialidades").add({ nombre, especialidadId }).then(() => {
-    document.getElementById("nuevaSubespecialidad").value = "";
-  });
-}
-
-// --- AGREGAR TEMA ---
-function agregarTema() {
-  const nombre = document.getElementById("nuevoTema").value.trim();
-  const especialidadId = document.getElementById("temaEspecialidad").value;
-  const subespecialidadId = document.getElementById("temaSubespecialidad").value;
-  if (!nombre || !especialidadId) return alert("Completa al menos el nombre y especialidad");
-  const tema = { nombre, especialidadId };
-  if (subespecialidadId) tema.subespecialidadId = subespecialidadId;
-  db.collection("temas").add(tema).then(() => {
-    document.getElementById("nuevoTema").value = "";
-  });
-}
-
-// --- LISTAR ESPECIALIDADES, SUBESPECIALIDADES Y TEMAS ---
-function listarEspecialidades() {
-  const cont = document.getElementById("listaEspecialidades");
-  db.collection("especialidades").get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      html += `<li>${doc.data().nombre}</li>`;
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-  });
-}
-function listarSubespecialidades() {
-  const especialidadId = document.getElementById("relacionEspecialidad").value;
-  const cont = document.getElementById("listaSubespecialidades");
-  if (!especialidadId) { cont.innerHTML = ""; return; }
-  db.collection("subespecialidades").where("especialidadId", "==", especialidadId).get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      html += `<li>${doc.data().nombre}</li>`;
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-  });
-}
-function listarTemas() {
-  const especialidadId = document.getElementById("temaEspecialidad").value;
-  const subespecialidadId = document.getElementById("temaSubespecialidad").value;
-  const cont = document.getElementById("listaTemas");
-  if (!especialidadId) { cont.innerHTML = ""; return; }
-  db.collection("temas").where("especialidadId", "==", especialidadId).get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      const tema = doc.data();
-      if (!subespecialidadId || !tema.subespecialidadId || tema.subespecialidadId === subespecialidadId) {
-        html += `<li>${tema.nombre}${tema.subespecialidadId ? " (Subesp. ID: " + tema.subespecialidadId + ")" : ""}</li>`;
-      }
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-  });
-}
-
-// --- GUARDAR PREGUNTA ---
-function guardarPregunta() {
-  const pregunta = document.getElementById("pregunta").value.trim();
-  const especialidadId = document.getElementById("especialidad").value;
-  const subespecialidadId = document.getElementById("subespecialidad").value;
-  const temaId = document.getElementById("tema").value;
-  const opA = document.getElementById("opA").value.trim();
-  const expA = document.getElementById("expA").value.trim();
-  const opB = document.getElementById("opB").value.trim();
-  const expB = document.getElementById("expB").value.trim();
-  const opC = document.getElementById("opC").value.trim();
-  const expC = document.getElementById("expC").value.trim();
-  const opD = document.getElementById("opD").value.trim();
-  const expD = document.getElementById("expD").value.trim();
-  const correcta = document.getElementById("correcta").value;
-  if (!pregunta || !especialidadId || !temaId) {
-    alert("Pregunta, especialidad y tema son obligatorios.");
+  if (seleccionadas.includes("TODAS")) {
+    const snapshot = await db.collection("preguntas").get();
+    snapshot.forEach(doc => preguntas.push(doc.data()));
+  } else if (seleccionadas.length > 0) {
+    for (const esp of seleccionadas) {
+      const snapshot = await db.collection("preguntas").where("especialidad", "==", esp).get();
+      snapshot.forEach(doc => preguntas.push(doc.data()));
+    }
+  } else {
+    alert("Selecciona al menos una especialidad o usa la opción aleatoria.");
     return;
   }
-  db.collection("preguntas").add({
-    pregunta,
-    especialidadId,
-    subespecialidadId: subespecialidadId || null,
-    temaId,
-    opciones: {
-      A: { texto: opA, explicacion: expA },
-      B: { texto: opB, explicacion: expB },
-      C: { texto: opC, explicacion: expC },
-      D: { texto: opD, explicacion: expD }
-    },
-    correcta,
-    creado: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    alert("¡Pregunta guardada!");
-    limpiarFormularioPregunta();
-    buscarPreguntas();
+
+  if (preguntas.length === 0) {
+    alert("No hay preguntas disponibles para esa selección.");
+    return;
+  }
+
+  preguntas.sort(() => Math.random() - 0.5);
+  preguntas = preguntas.slice(0, cantidad);
+  index = 0;
+  aciertos = 0;
+
+  document.getElementById("filtro").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  cargarPregunta();
+}
+
+function cargarPregunta() {
+  const q = preguntas[index];
+  document.getElementById("pregunta").innerText = q.pregunta;
+  document.getElementById("contador").innerText = `Pregunta ${index + 1} de ${preguntas.length}`;
+  document.getElementById("aciertos").innerText = `✔️ ${aciertos} aciertos`;
+  document.getElementById("progreso").style.width = ((index) / preguntas.length) * 100 + "%";
+
+  const opciones = document.getElementById("opciones");
+  opciones.innerHTML = "";
+  for (let letra in q.opciones) {
+    const label = document.createElement("label");
+    label.innerHTML = `<input type="radio" name="respuesta" value="${letra}"> ${letra}. ${q.opciones[letra]}`;
+    opciones.appendChild(label);
+  }
+
+  document.getElementById("feedback").style.display = "none";
+  document.getElementById("btnSiguiente").style.display = "none";
+  document.getElementById("btnVerificar").style.display = "inline-block";
+}
+
+function verificar() {
+  const seleccionada = document.querySelector('input[name="respuesta"]:checked');
+  if (!seleccionada) return alert("Selecciona una respuesta.");
+  const q = preguntas[index];
+  const correcta = q.correcta;
+  const user = seleccionada.value;
+
+  if (user === correcta) aciertos++;
+
+  let html = "";
+  for (let letra in q.opciones) {
+    const label = letra === correcta ? "✅" : (letra === user ? "❌" : "•");
+    html += `<p><strong>${label} ${letra}:</strong> ${q.explicacion[letra]}</p>`;
+  }
+
+  document.getElementById("feedback").innerHTML = html;
+  document.getElementById("feedback").style.display = "block";
+
+  document.querySelectorAll('#opciones input[name="respuesta"]').forEach(input => {
+    const label = input.closest("label");
+    if (input.value === correcta) {
+      label.classList.add("correcta");
+    } else if (input.checked && input.value !== correcta) {
+      label.classList.add("incorrecta");
+    }
   });
+
+  document.getElementById("btnVerificar").style.display = "none";
+  document.getElementById("btnSiguiente").style.display = "inline-block";
+  document.getElementById("aciertos").innerText = `✔️ ${aciertos} aciertos`;
 }
 
-function limpiarFormularioPregunta() {
-  document.getElementById("pregunta").value = "";
-  document.getElementById("opA").value = "";
-  document.getElementById("expA").value = "";
-  document.getElementById("opB").value = "";
-  document.getElementById("expB").value = "";
-  document.getElementById("opC").value = "";
-  document.getElementById("expC").value = "";
-  document.getElementById("opD").value = "";
-  document.getElementById("expD").value = "";
-  document.getElementById("correcta").value = "A";
-  // No limpiamos select para mantener la selección
+function siguiente() {
+  index++;
+  if (index >= preguntas.length) {
+    mostrarResultados();
+  } else {
+    cargarPregunta();
+  }
 }
 
-// --- BUSCAR Y LISTAR PREGUNTAS ---
-function buscarPreguntas() {
-  const buscador = document.getElementById("buscador").value.trim().toLowerCase();
-  const lista = document.getElementById("listaPreguntas");
-  let query = db.collection("preguntas").orderBy("creado", "desc");
-  query.get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      const p = doc.data();
-      if (buscador && !p.pregunta.toLowerCase().includes(buscador)) return;
-      html += `<li>
-        <b>${p.pregunta}</b><br/>
-        Especialidad: ${p.especialidadId} | Subespecialidad: ${p.subespecialidadId || "-"} | Tema: ${p.temaId}<br/>
-        Respuesta correcta: ${p.correcta}
-      </li>`;
-    });
-    html += "</ul>";
-    lista.innerHTML = html;
-  });
+function mostrarResultados() {
+  const total = preguntas.length;
+  const porcentaje = Math.round((aciertos / total) * 100);
+  let rango = "";
+
+  if (porcentaje >= 90) rango = "🔵 Excelente";
+  else if (porcentaje >= 70) rango = "🟢 Bueno";
+  else if (porcentaje >= 50) rango = "🟡 Regular";
+  else rango = "🔴 Necesita mejorar";
+
+  document.getElementById("quiz").innerHTML = `
+    <div class="resultado-final">
+      <h2>Resultados</h2>
+      <p><strong>Puntuación:</strong> ${aciertos} / ${total}</p>
+      <p><strong>Porcentaje de aciertos:</strong> ${porcentaje}%</p>
+      <p><strong>Evaluación:</strong> ${rango}</p>
+      <button onclick="location.reload()" class="boton">Volver a intentar</button><br><br>
+      <button onclick="window.location.href=window.location.href" class="boton secundario">Hacer otro quiz</button>
+    </div>
+  `;
 }
-
-// --- EVENTOS ---
-document.getElementById("especialidad").addEventListener("change", () => {
-  cargarSubespecialidades();
-  cargarTemas();
-});
-document.getElementById("subespecialidad").addEventListener("change", cargarTemas);
-document.getElementById("relacionEspecialidad").addEventListener("change", cargarSubespecialidadesParaTemas);
-document.getElementById("temaEspecialidad").addEventListener("change", cargarSubespecialidadesParaTemas);
-
-// --- INICIALIZACIÓN ---
-cargarEspecialidades();
-buscarPreguntas();
