@@ -11,8 +11,17 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let preguntas = [];
+let preguntasOriginales = [];
 let index = 0;
 let aciertos = 0;
+
+// Mezclar un array (Fisher-Yates)
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 // Cargar especialidades al inicio
 async function cargarEspecialidades() {
@@ -101,6 +110,8 @@ async function cargarPreguntas() {
 
   preguntas.sort(() => Math.random() - 0.5);
   preguntas = preguntas.slice(0, cantidad);
+  // Guardamos el set original para volver a intentar sin recargar ni filtrar de nuevo
+  preguntasOriginales = preguntas.map(p => JSON.parse(JSON.stringify(p)));
   index = 0;
   aciertos = 0;
 
@@ -119,11 +130,23 @@ function cargarPregunta() {
   const opciones = document.getElementById("opciones");
   opciones.innerHTML = "";
 
-  for (let letra in q.opciones) {
+  // Mezcla las opciones y las asigna a letras a, b, c, d, e
+  const letras = ['a', 'b', 'c', 'd', 'e'];
+  const arrOpciones = Object.entries(q.opciones);
+  shuffle(arrOpciones);
+
+  // Guardar la nueva relación para saber cuál es la correcta
+  q._letraCorrecta = undefined;
+  q._mapOpciones = {};
+
+  arrOpciones.forEach(([letraOriginal, texto], i) => {
+    const letraNueva = letras[i];
+    if (letraOriginal === q.correcta) q._letraCorrecta = letraNueva;
+    q._mapOpciones[letraNueva] = { texto, letraOriginal };
     const label = document.createElement("label");
-    label.innerHTML = `<input type="radio" name="respuesta" value="${letra}"> <span class="letra">${letra}.</span> ${q.opciones[letra]}`;
+    label.innerHTML = `<input type="radio" name="respuesta" value="${letraNueva}"> <span class="letra">${letraNueva}.</span> ${texto}`;
     opciones.appendChild(label);
-  }
+  });
 
   document.getElementById("feedback").style.display = "none";
   document.getElementById("btnSiguiente").style.display = "none";
@@ -134,16 +157,20 @@ function verificar() {
   const seleccionada = document.querySelector('input[name="respuesta"]:checked');
   if (!seleccionada) return alert("Selecciona una respuesta.");
   const q = preguntas[index];
-  const correcta = q.correcta;
+  const correcta = q._letraCorrecta;
   const user = seleccionada.value;
 
   if (user === correcta) aciertos++;
 
   let html = "";
-  for (let letra in q.opciones) {
-    const icono = letra === correcta ? "✅" : (letra === user ? "❌" : "•");
-    html += `<div class="feedback-opcion"><strong>${icono} ${letra}:</strong> ${q.explicacion && q.explicacion[letra] ? q.explicacion[letra] : ''}</div>`;
-  }
+  const letras = ['a', 'b', 'c', 'd', 'e'];
+  letras.forEach(letra => {
+    if (q._mapOpciones[letra]) {
+      const letraOriginal = q._mapOpciones[letra].letraOriginal;
+      const icono = letra === correcta ? "✅" : (letra === user ? "❌" : "•");
+      html += `<div class="feedback-opcion"><strong>${icono} ${letra}:</strong> ${q.explicacion && q.explicacion[letraOriginal] ? q.explicacion[letraOriginal] : ''}</div>`;
+    }
+  });
 
   document.getElementById("feedback").innerHTML = html;
   document.getElementById("feedback").style.display = "block";
@@ -187,8 +214,34 @@ function mostrarResultados() {
       <p><strong>Puntuación:</strong> ${aciertos} / ${total}</p>
       <p><strong>Porcentaje de aciertos:</strong> ${porcentaje}%</p>
       <p><strong>Evaluación:</strong> ${rango}</p>
-      <button onclick="location.reload()" class="boton">Volver a intentar</button><br><br>
+      <button onclick="volverAIntentar()" class="boton">Volver a intentar</button><br><br>
       <button onclick="window.location.href=window.location.href" class="boton secundario">Hacer otro quiz</button>
     </div>
   `;
+}
+
+// Esta función permite reiniciar el quiz de inmediato con las mismas preguntas pero en orden aleatorio nuevo
+function volverAIntentar() {
+  // Clona el arreglo de preguntas originales y lo mezcla
+  preguntas = preguntasOriginales.map(p => JSON.parse(JSON.stringify(p)));
+  preguntas.sort(() => Math.random() - 0.5);
+  index = 0;
+  aciertos = 0;
+  document.getElementById("filtro").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("quiz").innerHTML = `
+    <div class="barra-progreso">
+      <div id="progreso" class="progreso-fill"></div>
+    </div>
+    <div class="topbar">
+      <span id="contador">Pregunta 1</span>
+      <span id="aciertos">✔️ 0 aciertos</span>
+    </div>
+    <h2 id="pregunta"></h2>
+    <form id="opciones" class="opciones"></form>
+    <div id="feedback" class="feedback" style="display:none;"></div>
+    <button id="btnVerificar" onclick="verificar();return false;" class="boton">Verificar</button>
+    <button id="btnSiguiente" onclick="siguiente();return false;" class="boton secundario" style="display:none;">Siguiente pregunta</button>
+  `;
+  cargarPregunta();
 }
