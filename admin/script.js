@@ -11,11 +11,200 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
 function mostrarEstado(msg) {
   document.getElementById("estado").innerText = msg || "";
 }
 
-// --- CARGA DE ESPECIALIDADES EN SELECTS ---
+/* ========== ESPECIALIDADES ========== */
+let idEspecialidadEdit = null;
+
+function agregarEspecialidad() {
+  const nombre = document.getElementById("nuevaEspecialidad").value.trim();
+  if (!nombre) return alert("Ingrese el nombre de la especialidad");
+  if (idEspecialidadEdit) {
+    db.collection("especialidades").doc(idEspecialidadEdit).update({ nombre }).then(() => {
+      mostrarEstado("Especialidad actualizada.");
+      document.getElementById("nuevaEspecialidad").value = "";
+      document.getElementById("btnEspecialidad").innerText = "Agregar";
+      idEspecialidadEdit = null;
+    });
+  } else {
+    db.collection("especialidades").add({ nombre }).then(() => {
+      mostrarEstado("Especialidad agregada.");
+      document.getElementById("nuevaEspecialidad").value = "";
+    });
+  }
+}
+
+function editarEspecialidad(id, nombre) {
+  document.getElementById("nuevaEspecialidad").value = nombre;
+  document.getElementById("btnEspecialidad").innerText = "Actualizar";
+  idEspecialidadEdit = id;
+}
+
+function eliminarEspecialidad(id) {
+  if (!confirm("¿Eliminar esta especialidad? También se eliminarán todas sus subespecialidades y temas relacionados.")) return;
+  // Elimina subespecialidades y temas relacionados
+  db.collection("subespecialidades").where("especialidadId", "==", id).get().then(sss => {
+    const batch = db.batch();
+    sss.forEach(d => batch.delete(d.ref));
+    db.collection("temas").where("especialidadId", "==", id).get().then(ts => {
+      ts.forEach(d => batch.delete(d.ref));
+      batch.delete(db.collection("especialidades").doc(id));
+      batch.commit().then(() => mostrarEstado("Especialidad y elementos relacionados eliminados."));
+    });
+  });
+}
+
+function listarEspecialidades() {
+  const cont = document.getElementById("listaEspecialidades");
+  db.collection("especialidades").orderBy("nombre").get().then(snapshot => {
+    let html = "<ul>";
+    snapshot.forEach(doc => {
+      const nombre = doc.data().nombre;
+      html += `<li>
+        ${nombre}
+        <button onclick="editarEspecialidad('${doc.id}', '${nombre.replace(/'/g,"\\'")}')">Editar</button>
+        <button onclick="eliminarEspecialidad('${doc.id}')">Eliminar</button>
+      </li>`;
+    });
+    html += "</ul>";
+    cont.innerHTML = html;
+  });
+}
+
+/* ========== SUBESPECIALIDADES ========== */
+let idSubespecialidadEdit = null;
+
+function agregarSubespecialidad() {
+  const nombre = document.getElementById("nuevaSubespecialidad").value.trim();
+  const especialidadId = document.getElementById("relacionEspecialidad").value;
+  if (!nombre || !especialidadId) return alert("Completa ambos campos");
+  if (idSubespecialidadEdit) {
+    db.collection("subespecialidades").doc(idSubespecialidadEdit).update({ nombre, especialidadId }).then(() => {
+      mostrarEstado("Subespecialidad actualizada.");
+      document.getElementById("nuevaSubespecialidad").value = "";
+      document.getElementById("btnSubespecialidad").innerText = "Agregar";
+      idSubespecialidadEdit = null;
+    });
+  } else {
+    db.collection("subespecialidades").add({ nombre, especialidadId }).then(() => {
+      mostrarEstado("Subespecialidad agregada.");
+      document.getElementById("nuevaSubespecialidad").value = "";
+    });
+  }
+}
+
+function editarSubespecialidad(id, nombre, especialidadId) {
+  document.getElementById("nuevaSubespecialidad").value = nombre;
+  document.getElementById("relacionEspecialidad").value = especialidadId;
+  document.getElementById("btnSubespecialidad").innerText = "Actualizar";
+  idSubespecialidadEdit = id;
+}
+
+function eliminarSubespecialidad(id) {
+  if (!confirm("¿Eliminar esta subespecialidad? También se eliminarán todos los temas relacionados.")) return;
+  db.collection("temas").where("subespecialidadId", "==", id).get().then(ts => {
+    const batch = db.batch();
+    ts.forEach(d => batch.delete(d.ref));
+    batch.delete(db.collection("subespecialidades").doc(id));
+    batch.commit().then(() => mostrarEstado("Subespecialidad y temas relacionados eliminados."));
+  });
+}
+
+function listarSubespecialidades() {
+  const especialidadId = document.getElementById("relacionEspecialidad").value;
+  const cont = document.getElementById("listaSubespecialidades");
+  if (!especialidadId) { cont.innerHTML = ""; return; }
+  db.collection("subespecialidades").where("especialidadId", "==", especialidadId).orderBy("nombre").get().then(snapshot => {
+    let html = "<ul>";
+    snapshot.forEach(doc => {
+      const nombre = doc.data().nombre;
+      html += `<li>
+        ${nombre}
+        <button onclick="editarSubespecialidad('${doc.id}', '${nombre.replace(/'/g,"\\'")}', '${especialidadId}')">Editar</button>
+        <button onclick="eliminarSubespecialidad('${doc.id}')">Eliminar</button>
+      </li>`;
+    });
+    html += "</ul>";
+    cont.innerHTML = html;
+  });
+}
+
+/* ========== TEMAS ========== */
+let idTemaEdit = null;
+
+function agregarTema() {
+  const nombre = document.getElementById("nuevoTema").value.trim();
+  const especialidadId = document.getElementById("temaEspecialidad").value;
+  const subespecialidadId = document.getElementById("temaSubespecialidad").value;
+  if (!nombre || !especialidadId) return alert("Completa el nombre del tema y la especialidad");
+  if (idTemaEdit) {
+    const tema = { nombre, especialidadId };
+    if (subespecialidadId) tema.subespecialidadId = subespecialidadId;
+    db.collection("temas").doc(idTemaEdit).update(tema).then(() => {
+      mostrarEstado("Tema actualizado.");
+      document.getElementById("nuevoTema").value = "";
+      document.getElementById("btnTema").innerText = "Agregar";
+      idTemaEdit = null;
+    });
+  } else {
+    const tema = { nombre, especialidadId };
+    if (subespecialidadId) tema.subespecialidadId = subespecialidadId;
+    db.collection("temas").add(tema).then(() => {
+      document.getElementById("nuevoTema").value = "";
+      mostrarEstado("Tema agregado.");
+    });
+  }
+}
+
+function editarTema(id, nombre, especialidadId, subespecialidadId) {
+  document.getElementById("nuevoTema").value = nombre;
+  document.getElementById("temaEspecialidad").value = especialidadId;
+  cargarSubespecialidadesParaTemas(() => {
+    document.getElementById("temaSubespecialidad").value = subespecialidadId || "";
+  });
+  document.getElementById("btnTema").innerText = "Actualizar";
+  idTemaEdit = id;
+}
+
+function eliminarTema(id) {
+  if (!confirm("¿Eliminar este tema?")) return;
+  db.collection("temas").doc(id).delete().then(() => {
+    mostrarEstado("Tema eliminado.");
+    listarTemas();
+  });
+}
+
+function listarTemas() {
+  const especialidadId = document.getElementById("temaEspecialidad").value;
+  const subespecialidadId = document.getElementById("temaSubespecialidad").value;
+  const cont = document.getElementById("listaTemas");
+  if (!especialidadId) { cont.innerHTML = ""; return; }
+  let query = db.collection("temas").where("especialidadId", "==", especialidadId);
+  query.get().then(snapshot => {
+    let html = "<ul>";
+    snapshot.forEach(doc => {
+      const tema = doc.data();
+      if (
+        (!subespecialidadId && !tema.subespecialidadId) ||
+        (subespecialidadId && tema.subespecialidadId === subespecialidadId)
+      ) {
+        html += `<li>
+          ${tema.nombre}
+          <button onclick="editarTema('${doc.id}', '${tema.nombre.replace(/'/g,"\\'")}', '${tema.especialidadId}', '${tema.subespecialidadId || ""}')">Editar</button>
+          <button onclick="eliminarTema('${doc.id}')">Eliminar</button>
+          ${tema.subespecialidadId ? " (Subesp. ID: " + tema.subespecialidadId + ")" : ""}
+        </li>`;
+      }
+    });
+    html += "</ul>";
+    cont.innerHTML = html;
+  });
+}
+
+/* ========== CARGAS Y EVENTOS ========== */
 function cargarEspecialidades() {
   const especialidadSelects = [
     document.getElementById("especialidad"),
@@ -44,7 +233,6 @@ function cargarEspecialidades() {
   }, (err) => mostrarEstado("Error cargando especialidades: " + err));
 }
 
-// --- CARGA DE SUBESPECIALIDADES ---
 function cargarSubespecialidades() {
   const especialidadId = document.getElementById("especialidad").value;
   const subespecialidadSelect = document.getElementById("subespecialidad");
@@ -62,12 +250,14 @@ function cargarSubespecialidades() {
   }, (err) => mostrarEstado("Error cargando subespecialidades: " + err));
 }
 
-// --- CARGA DE SUBESPECIALIDADES PARA TEMAS ---
-function cargarSubespecialidadesParaTemas() {
+function cargarSubespecialidadesParaTemas(cb) {
   const especialidadId = document.getElementById("temaEspecialidad").value;
   const temaSubespecialidad = document.getElementById("temaSubespecialidad");
   temaSubespecialidad.innerHTML = "<option value=''>Ninguna</option>";
-  if (!especialidadId) return;
+  if (!especialidadId) {
+    if (cb) cb();
+    return;
+  }
   db.collection("subespecialidades").where("especialidadId", "==", especialidadId).orderBy("nombre").get().then(snapshot => {
     snapshot.forEach((doc) => {
       const option = document.createElement("option");
@@ -75,27 +265,11 @@ function cargarSubespecialidadesParaTemas() {
       option.text = doc.data().nombre;
       temaSubespecialidad.appendChild(option);
     });
+    if (cb) cb();
     listarTemas();
   });
 }
 
-// --- AGREGAR TEMA (subespecialidad opcional) ---
-function agregarTema() {
-  const nombre = document.getElementById("nuevoTema").value.trim();
-  const especialidadId = document.getElementById("temaEspecialidad").value;
-  const subespecialidadId = document.getElementById("temaSubespecialidad").value;
-  if (!nombre || !especialidadId) return alert("Completa el nombre del tema y la especialidad");
-  const tema = { nombre, especialidadId };
-  if (subespecialidadId) tema.subespecialidadId = subespecialidadId;
-  db.collection("temas").add(tema).then(() => {
-    document.getElementById("nuevoTema").value = "";
-    mostrarEstado("Tema agregado.");
-    listarTemas();
-    cargarTemas();
-  });
-}
-
-// --- CARGA DE TEMAS SEGÚN ESPECIALIDAD Y SUBESPECIALIDAD (para select de preguntas) ---
 function cargarTemas() {
   const especialidadId = document.getElementById("especialidad").value;
   const subespecialidadId = document.getElementById("subespecialidad").value;
@@ -120,75 +294,7 @@ function cargarTemas() {
   });
 }
 
-// --- AGREGAR ESPECIALIDAD ---
-function agregarEspecialidad() {
-  const nombre = document.getElementById("nuevaEspecialidad").value.trim();
-  if (!nombre) return alert("Ingrese el nombre de la especialidad");
-  db.collection("especialidades").add({ nombre }).then(() => {
-    document.getElementById("nuevaEspecialidad").value = "";
-    mostrarEstado("Especialidad agregada.");
-  });
-}
-
-// --- AGREGAR SUBESPECIALIDAD ---
-function agregarSubespecialidad() {
-  const nombre = document.getElementById("nuevaSubespecialidad").value.trim();
-  const especialidadId = document.getElementById("relacionEspecialidad").value;
-  if (!nombre || !especialidadId) return alert("Completa ambos campos");
-  db.collection("subespecialidades").add({ nombre, especialidadId }).then(() => {
-    document.getElementById("nuevaSubespecialidad").value = "";
-    mostrarEstado("Subespecialidad agregada.");
-  });
-}
-
-// --- LISTADOS ---
-function listarEspecialidades() {
-  const cont = document.getElementById("listaEspecialidades");
-  db.collection("especialidades").orderBy("nombre").get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      html += `<li>${doc.data().nombre}</li>`;
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-  });
-}
-function listarSubespecialidades() {
-  const especialidadId = document.getElementById("relacionEspecialidad").value;
-  const cont = document.getElementById("listaSubespecialidades");
-  if (!especialidadId) { cont.innerHTML = ""; return; }
-  db.collection("subespecialidades").where("especialidadId", "==", especialidadId).orderBy("nombre").get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      html += `<li>${doc.data().nombre}</li>`;
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-  });
-}
-function listarTemas() {
-  const especialidadId = document.getElementById("temaEspecialidad").value;
-  const subespecialidadId = document.getElementById("temaSubespecialidad").value;
-  const cont = document.getElementById("listaTemas");
-  if (!especialidadId) { cont.innerHTML = ""; return; }
-  let query = db.collection("temas").where("especialidadId", "==", especialidadId);
-  query.get().then(snapshot => {
-    let html = "<ul>";
-    snapshot.forEach(doc => {
-      const tema = doc.data();
-      if (
-        (!subespecialidadId && !tema.subespecialidadId) ||
-        (subespecialidadId && tema.subespecialidadId === subespecialidadId)
-      ) {
-        html += `<li>${tema.nombre}${tema.subespecialidadId ? " (Subesp. ID: " + tema.subespecialidadId + ")" : ""}</li>`;
-      }
-    });
-    html += "</ul>";
-    cont.innerHTML = html;
-  });
-}
-
-// --- GUARDAR PREGUNTA ---
+/* ========== PREGUNTAS ========== */
 function guardarPregunta() {
   const pregunta = document.getElementById("pregunta").value.trim();
   const especialidadId = document.getElementById("especialidad").value;
@@ -240,7 +346,6 @@ function limpiarFormularioPregunta() {
   document.getElementById("correcta").value = "A";
 }
 
-// --- BUSCAR Y LISTAR PREGUNTAS (MUESTRA NOMBRES DE RELACIONES) ---
 async function buscarPreguntas() {
   const buscador = document.getElementById("buscador").value.trim().toLowerCase();
   const lista = document.getElementById("listaPreguntas");
@@ -258,12 +363,16 @@ async function buscarPreguntas() {
     if(p.temaId) temaIds.add(p.temaId);
   });
 
-  // Carga todos los nombres de referencia en mapas
+  // Firestore limita a 10 el "in", así que hay que trocear si hay más de 10
   async function fetchCollectionMap(col, idsSet) {
     if(!idsSet.size) return {};
-    const docs = await db.collection(col).where(firebase.firestore.FieldPath.documentId(), "in", Array.from(idsSet)).get();
+    const idsArray = Array.from(idsSet);
     const map = {};
-    docs.forEach(d => map[d.id] = d.data().nombre);
+    for(let i = 0; i < idsArray.length; i += 10) {
+      const idsChunk = idsArray.slice(i, i+10);
+      const docs = await db.collection(col).where(firebase.firestore.FieldPath.documentId(), "in", idsChunk).get();
+      docs.forEach(d => map[d.id] = d.data().nombre);
+    }
     return map;
   }
   const [especialidadesMap, subespecialidadesMap, temasMap] = await Promise.all([
@@ -289,16 +398,19 @@ async function buscarPreguntas() {
   lista.innerHTML = html;
 }
 
-// --- EVENTOS ---
+/* ========== EVENTOS & CARGA ========= */
+document.getElementById("btnEspecialidad").onclick = agregarEspecialidad;
+document.getElementById("btnSubespecialidad").onclick = agregarSubespecialidad;
+document.getElementById("btnTema").onclick = agregarTema;
+
 document.getElementById("especialidad").addEventListener("change", () => {
   cargarSubespecialidades();
   cargarTemas();
 });
 document.getElementById("subespecialidad").addEventListener("change", cargarTemas);
-document.getElementById("relacionEspecialidad").addEventListener("change", cargarSubespecialidadesParaTemas);
-document.getElementById("temaEspecialidad").addEventListener("change", cargarSubespecialidadesParaTemas);
+document.getElementById("relacionEspecialidad").addEventListener("change", listarSubespecialidades);
+document.getElementById("temaEspecialidad").addEventListener("change", () => cargarSubespecialidadesParaTemas(listarTemas));
 document.getElementById("temaSubespecialidad").addEventListener("change", listarTemas);
 
-// --- INICIALIZACIÓN ---
 cargarEspecialidades();
 buscarPreguntas();
