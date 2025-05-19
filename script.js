@@ -120,10 +120,9 @@ function cargarPregunta() {
   opciones.innerHTML = "";
 
   for (let letra in q.opciones) {
-    const div = document.createElement("div");
-    div.className = "opcion-container";
-    div.innerHTML = `<label><input type="radio" name="respuesta" value="${letra}"> <span class="letra">${letra}.</span> ${q.opciones[letra]}</label>`;
-    opciones.appendChild(div);
+    const label = document.createElement("label");
+    label.innerHTML = `<input type="radio" name="respuesta" value="${letra}"> <span class="letra">${letra}.</span> ${q.opciones[letra]}`;
+    opciones.appendChild(label);
   }
 
   document.getElementById("feedback").style.display = "none";
