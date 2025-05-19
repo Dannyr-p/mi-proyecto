@@ -1,117 +1,81 @@
-
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f5f7fa;
-  color: #1f2937;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f4f4f4;
   margin: 0;
-  padding: 20px;
+  padding: 0;
 }
-.container {
+
+main.container {
   max-width: 900px;
-  margin: auto;
-}
-h1, h2, h3 {
-  color: #111827;
-}
-section {
-  background: white;
-  padding: 20px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 32px;
   border-radius: 10px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
 }
+
+h1, h2, h3 {
+  color: #0d9488;
+}
+
+section {
+  margin-bottom: 32px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 label {
-  font-weight: 600;
   display: block;
   margin-top: 10px;
+  margin-bottom: 4px;
+  color: #333;
 }
-textarea, input[type="text"], select {
+
+input[type="text"], select, textarea {
   width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  font-size: 1em;
+  box-sizing: border-box;
 }
+
 textarea {
   resize: vertical;
-  min-height: 50px;
+  min-height: 36px;
 }
+
 button {
-  background: #2563eb;
-  color: white;
-  font-weight: 600;
+  background: #14b8a6;
+  color: #fff;
   border: none;
-  padding: 10px 18px;
-  margin-top: 12px;
+  padding: 8px 18px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 1em;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
+
 button:hover {
-  background: #1e40af;
+  background: #0d9488;
 }
-#listaPreguntas .pregunta {
-  background: #f9fafb;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-#listaPreguntas button {
-  background: #ef4444;
-  margin-left: 10px;
-}
-#listaPreguntas button.edit {
-  background: #10b981;
-}
+
 .categorias {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-}
-
-
-.categoria-item {
-  position: relative;
-  padding-right: 50px;
-}
-
-.categoria-item .acciones {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.categoria-item:hover .acciones {
-  display: inline-block;
-}
-
-
-.categoria-item .acciones button {
-  font-size: 12px;
-  padding: 2px 5px;
-  margin-left: 4px;
-  vertical-align: middle;
-}
-
-
-.categoria-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 8px;
-  margin-bottom: 6px;
-  border-radius: 6px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
-.categoria-item .acciones button {
-  font-size: 12px;
-  padding: 2px 4px;
-  line-height: 1;
-  margin-left: 5px;
-  vertical-align: middle;
-  cursor: pointer;
+
+.categorias > div {
+  flex: 1;
+  min-width: 220px;
+}
+
+#estado {
+  margin-top: 18px;
+  color: #dc2626;
+  font-weight: bold;
+  min-height: 24px;
 }
