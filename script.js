@@ -20,6 +20,8 @@ async function cargarCategorias() {
   const listaEsp = document.getElementById("listaEspecialidades");
   const listaSub = document.getElementById("listaSubespecialidades");
   const listaTemas = document.getElementById("listaTemas");
+  const temaEspSel = document.getElementById("temaEspecialidad");
+  const temaSubespSel = document.getElementById("temaSubespecialidad");
 
   espSel.innerHTML = "<option value=''>Selecciona una especialidad</option>";
   subSel.innerHTML = "<option value=''>—</option>";
@@ -27,13 +29,17 @@ async function cargarCategorias() {
   listaEsp.innerHTML = "";
   listaSub.innerHTML = "";
   listaTemas.innerHTML = "";
+  temaEspSel.innerHTML = "<option value=''>Selecciona una especialidad</option>";
+  temaSubespSel.innerHTML = "<option value=''>Selecciona una subespecialidad (opcional)</option>";
+  temaSubespSel.disabled = true;
 
+  // Cargar especialidades
   const espSnap = await db.collection("especialidades").get();
   espSnap.forEach(doc => {
     const nombre = doc.data().nombre;
     espSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
     document.getElementById("relacionEspecialidad").innerHTML += `<option value="${nombre}">${nombre}</option>`;
-    document.getElementById("temaEspecialidad").innerHTML += `<option value="${nombre}">${nombre}</option>`;
+    temaEspSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
     listaEsp.innerHTML += `
       <div class="categoria-item">${nombre}
         <span class="acciones">
@@ -43,6 +49,7 @@ async function cargarCategorias() {
       </div>`;
   });
 
+  // Cargar subespecialidades
   const subSnap = await db.collection("subespecialidades").get();
   subSnap.forEach(doc => {
     const nombre = doc.data().nombre;
@@ -56,12 +63,13 @@ async function cargarCategorias() {
       </div>`;
   });
 
+  // Cargar temas
   const temasSnap = await db.collection("temas").get();
   temasSnap.forEach(doc => {
     const nombre = doc.data().nombre;
-    temaSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
+    const subespecialidad = doc.data().subespecialidad || "";
     listaTemas.innerHTML += `
-      <div class="categoria-item">${nombre}
+      <div class="categoria-item">${nombre}${subespecialidad ? " (" + subespecialidad + ")" : ""}
         <span class="acciones">
           <button onclick="editarCategoria('temas', '${nombre}')">✏️</button>
           <button onclick="eliminarTema('${nombre}')">🗑</button>
@@ -101,9 +109,35 @@ document.getElementById("especialidad").addEventListener("change", async functio
   });
 });
 
+// Al cambiar especialidad en formulario de temas, cargar subespecialidades relacionadas
+document.getElementById("temaEspecialidad").addEventListener("change", async function () {
+  const especialidadSeleccionada = this.value;
+  const subSel = document.getElementById("temaSubespecialidad");
+  subSel.innerHTML = '<option value="">Selecciona una subespecialidad (opcional)</option>';
+
+  if (!especialidadSeleccionada) {
+    subSel.disabled = true;
+    return;
+  }
+
+  const subSnap = await db.collection("subespecialidades")
+    .where("especialidad", "==", especialidadSeleccionada)
+    .get();
+
+  let tieneSubesp = false;
+  subSnap.forEach(doc => {
+    const nombre = doc.data().nombre;
+    subSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
+    tieneSubesp = true;
+  });
+
+  subSel.disabled = !tieneSubesp;
+});
+
 // Inicializar al cargar
 window.onload = () => {
   cargarCategorias();
+  cargarPreguntas();
 };
 
 // Guardar nueva especialidad
@@ -116,14 +150,25 @@ async function agregarEspecialidad() {
   }
 }
 
-// Guardar nuevo tema
+// Guardar nuevo tema con subespecialidad opcional
 async function agregarTema() {
   const nombre = document.getElementById("nuevoTema").value;
-  if (nombre) {
-    await db.collection("temas").add({ nombre });
+  const especialidad = document.getElementById("temaEspecialidad").value;
+  const subespecialidad = document.getElementById("temaSubespecialidad").value;
+
+  if (nombre && especialidad) {
+    await db.collection("temas").add({ 
+      nombre, 
+      especialidad, 
+      subespecialidad: subespecialidad || "" 
+    });
     cargarCategorias();
     document.getElementById("nuevoTema").value = "";
     document.getElementById("temaEspecialidad").selectedIndex = 0;
+    document.getElementById("temaSubespecialidad").innerHTML = '<option value="">Selecciona una subespecialidad (opcional)</option>';
+    document.getElementById("temaSubespecialidad").disabled = true;
+  } else {
+    alert("Debes ingresar un nombre y seleccionar una especialidad.");
   }
 }
 
@@ -232,10 +277,7 @@ async function editarPregunta(id) {
 }
 
 // Cargar también preguntas al iniciar
-window.onload = () => {
-  cargarCategorias();
-  cargarPreguntas();
-}
+// (ya se hace en window.onload)
 
 // Eliminar especialidad
 async function eliminarEspecialidad(nombre) {
@@ -276,7 +318,7 @@ async function editarCategoria(tipo, nombreActual) {
   cargarCategorias();
 }
 
-// Filtrar temas por especialidad
+// Filtrar temas por especialidad en el formulario de pregunta
 document.getElementById("especialidad").addEventListener("change", async function () {
   const especialidadSeleccionada = this.value;
   const subSel = document.getElementById("subespecialidad");
@@ -284,7 +326,6 @@ document.getElementById("especialidad").addEventListener("change", async functio
   subSel.innerHTML = "<option value=''>—</option>";
   temaSel.innerHTML = "<option value=''>Selecciona un tema</option>";
 
-  
   const subSnap = await db.collection("subespecialidades")
     .where("especialidad", "==", especialidadSeleccionada)
     .get();
@@ -297,7 +338,6 @@ document.getElementById("especialidad").addEventListener("change", async functio
       subSel.innerHTML += `<option value="${nombre}">${nombre}</option>`;
     }
   });
-
 
   const temaSnap = await db.collection("temas")
     .where("especialidad", "==", especialidadSeleccionada)
